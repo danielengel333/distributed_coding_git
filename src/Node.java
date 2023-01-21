@@ -62,23 +62,30 @@ public class Node extends Thread
         }
     }
 
+    public void printId(){
+        System.out.println(this.id);
+    }
+
     @Override
     public void run()
     {
+
         InputThread[] servers = new InputThread[num_of_neighbors];
         for (int i = 0; i < num_of_neighbors; i++)
         {
-            InputThread server = new InputThread(neighbors_input_port[i]);
+            InputThread server = new InputThread(this.neighbors_input_port[i], this.neighbors_output_port);
+            //System.out.println(this.neighbors_input_port[i]);
             servers[i] = server;
-            server.run();
+            server.start();
         }
 
         OutputThread[] clients = new OutputThread[num_of_neighbors];
         for (int i = 0; i < num_of_neighbors; i++)
         {
-            OutputThread client = new OutputThread(neighbors_output_port[i]);
+            //System.out.println("Hello");
+            OutputThread client = new OutputThread(neighbors_output_port[i], this.id);
             clients[i] = client;
-            client.run();
+            client.start();
         }
     }
 }

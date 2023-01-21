@@ -5,15 +5,18 @@ import java.io.*;
 public class OutputThread extends Thread
 {
     private int port;
-    public OutputThread(int port)
+    private int message;
+    public OutputThread(int port, int message)
     {
         this.port = port;
+        this.message = message;
     }
     @Override
     public void run()
     {
         try
         {
+
             Scanner scn = new Scanner(System.in);
 
             // getting localhost ip
@@ -21,7 +24,7 @@ public class OutputThread extends Thread
 
             // establish the connection with server port 5056
             Socket s = new Socket(ip, port);
-
+            //System.out.println("HI");
             // obtaining input and out streams
             DataInputStream dis = new DataInputStream(s.getInputStream());
             DataOutputStream dos = new DataOutputStream(s.getOutputStream());
@@ -30,14 +33,16 @@ public class OutputThread extends Thread
             // information between client and client handler
             while (true)
             {
-                System.out.println(dis.readUTF());
-                String tosend = scn.nextLine();
-                dos.writeUTF(tosend);
+                //System.out.println(dis.readUTF());
+                //String tosend = scn.nextLine();
+                int tosend = this.message;
+                dos.writeInt(tosend);
 
                 // If client sends exit,close this connection
                 // and then break from the while loop
-                if(tosend.equals("Exit"))
+                if(tosend == this.message)
                 {
+                    System.out.println(tosend);
                     System.out.println("Closing this connection : " + s);
                     s.close();
                     System.out.println("Connection closed");
@@ -53,7 +58,9 @@ public class OutputThread extends Thread
             scn.close();
             dis.close();
             dos.close();
+            System.out.println("SENT MESSAGE");
         }catch(Exception e){
+            System.out.println("Output thread error");
             e.printStackTrace();
         }
     }
