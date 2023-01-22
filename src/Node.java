@@ -12,6 +12,7 @@ public class Node extends Thread
     private int num_of_nodes;
     private int num_of_neighbors;
     private double[][] weight_matrix;
+    private Pair<Pair<Integer, Integer>,Double>[] linkedState;
 
     public Node(int id, int[] neighbors_id, double[] edges, int[] neighbors_input_port, int[] neighbors__output_port, int num_of_nodes)
     {
@@ -22,6 +23,7 @@ public class Node extends Thread
         this.neighbors_output_port = neighbors__output_port;
         this.num_of_nodes = num_of_nodes;
         this.num_of_neighbors = this.edges.length;
+
 
         this.weight_matrix = new double[num_of_nodes][num_of_nodes];
         for (int i = 0; i < this.num_of_nodes; i++)
@@ -35,6 +37,10 @@ public class Node extends Thread
         {
             weight_matrix[this.id - 1][this.neighbors_id[i] - 1] = this.edges[i];
             weight_matrix[this.neighbors_id[i] - 1][this.id - 1] = this.edges[i];
+        }
+        for (int i = 0; i < this.edges.length; i++)
+        {
+            this.linkedState[i] = new Pair<Pair<Integer, Integer>,Double>(new Pair<>(this.id, this.neighbors_id[i]), this.edges[i]);
         }
     }
 
