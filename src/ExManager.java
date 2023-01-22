@@ -67,6 +67,16 @@ public class ExManager {
         {
             node.start();
         }
-
+        for (Node node : this.nodes)
+        {
+            try
+            {
+                node.join();
+            }
+            catch (InterruptedException e)
+            {
+                e.printStackTrace();
+            }
+        }
     }
 }
