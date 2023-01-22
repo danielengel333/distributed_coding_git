@@ -41,7 +41,7 @@ public class InputThread extends Thread
                 }
                 catch (Exception e)
                 {
-                    System.out.println("InputThread Exception");
+                    System.out.println("error caught in InputThread");
                     s.close();
                     e.printStackTrace();
                     break;
@@ -50,7 +50,7 @@ public class InputThread extends Thread
         }
         catch (IOException e)
         {
-            System.out.println("InputThread Exception");
+            System.out.println("error caught in InputThread");
             e.printStackTrace();
         }
     }

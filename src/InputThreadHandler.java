@@ -19,7 +19,7 @@ public class InputThreadHandler extends Thread
         try
         {
             ObjectInputStream input_stream = new ObjectInputStream(s.getInputStream());
-            Pair<Integer, Object> input = (Pair<Integer, Object>) input_stream.readObject();
+            Pair<Integer, Object> input = (Pair<Integer, Object>)input_stream.readObject();
 
             input_stream.close();
             s.close();
@@ -33,25 +33,45 @@ public class InputThreadHandler extends Thread
                 //get access from lock
                 this.node.getVisited_semaphore().acquire();
 
-
                 //change restricted area
                 this.node.getVisited()[source_id - 1] = 1;
                 this.node.setNum_visited(this.node.getNum_visited() + 1);
-
 
                 //free lock
                 this.node.getVisited_semaphore().release();
 
 
-                for (int output_port : this.node.getNeighbors_output_port())
+                // update weight matrix
+
+                //get access from lock
+                this.node.getWeight_matrix_semaphore().acquire();
+
+                //change restricted area
+                double[][] mat = this.node.getWeight_matrix();
+                for (Object pair : (Object[]) source_message)
                 {
-                    Thread t = new OutputThread(output_port, source_message, node);
+                    int id1 = ((Pair<Pair<Integer, Integer>,Double>)pair).getKey().getKey();
+                    int id2 = ((Pair<Pair<Integer, Integer>,Double>)pair).getKey().getValue();
+                    double weight = ((Pair<Pair<Integer, Integer>,Double>)pair).getValue();
+
+                    mat[id1 - 1][id2 - 1] = weight;
+                    mat[id2 - 1][id1 - 1] = weight;
+                }
+
+                //free lock
+                this.node.getWeight_matrix_semaphore().release();
+
+
+                for (int i = 0; i < this.node.getNeighbors_output_port().length; i++)
+                {
+                    Thread t = new OutputThread(i, source_message, node);
                     t.start();
                 }
             }
         }
         catch (Exception e)
         {
+            System.out.println("error caught in InputThreadHandler");
             e.printStackTrace();
         }
 
