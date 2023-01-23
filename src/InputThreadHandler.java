@@ -19,7 +19,12 @@ public class InputThreadHandler extends Thread
         try
         {
             ObjectInputStream input_stream = new ObjectInputStream(s.getInputStream());
-            Pair<Integer, Object> input = (Pair<Integer, Object>)input_stream.readObject();
+            //System.out.println("Momo 1");
+            Object o = input_stream.readObject();
+            //System.out.println(o.getClass());
+            Pair<Integer, Object> input = (Pair<Integer, Object>)o;
+            //System.out.println("Momo 2");
+            //Object input = input_stream.readObject();
 
             input_stream.close();
             s.close();
@@ -39,7 +44,6 @@ public class InputThreadHandler extends Thread
 
                 //free lock
                 this.node.getVisited_semaphore().release();
-
 
                 // update weight matrix
 
@@ -61,10 +65,9 @@ public class InputThreadHandler extends Thread
                 //free lock
                 this.node.getWeight_matrix_semaphore().release();
 
-
                 for (int i = 0; i < this.node.getNeighbors_output_port().length; i++)
                 {
-                    Thread t = new OutputThread(i, source_message, node);
+                    Thread t = new OutputThread(i, input, node);
                     t.start();
                 }
             }

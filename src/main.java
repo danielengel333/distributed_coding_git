@@ -20,7 +20,6 @@ public class main {
                     Node n = m.get_node(1 + (int)(Math.random() * num_of_nodes));
                     n.print_graph();
                     System.out.println();
-                    break;
                 }
 
                 if(line.contains("update")){

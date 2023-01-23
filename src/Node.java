@@ -58,11 +58,13 @@ public class Node extends Thread
         Object[] arr = new Object[this.edges.length];
         for (int i = 0; i < this.edges.length; i++)
         {
-            arr[i] = new Pair<Pair<Integer, Integer>,Double>(new Pair<>(this.id, this.neighbors_id[i]), this.edges[i]);
+            arr[i] = new Pair<>(new Pair<>(this.id, this.neighbors_id[i]), this.edges[i]);
         }
         this.linkedState = new Pair<>(this.id, arr);
 
         this.visited_semaphore = new Semaphore(1);
+
+        this.weight_matrix_semaphore = new Semaphore(1);
 
         this.socket_semaphores = new Semaphore[this.neighbors_output_port.length];
         for (int i = 0; i < this.neighbors_output_port.length; i++)
@@ -74,14 +76,19 @@ public class Node extends Thread
         {
             InetAddress ip = InetAddress.getByName("localhost");
             this.sockets = new Socket[this.neighbors_output_port.length];
-            for (int i = 0; i < this.neighbors_output_port.length; i++)
-            {
-                this.sockets[i] = new Socket(ip, this.neighbors_output_port[i]);
-            }
+            //for (int port : this.neighbors_output_port)
+            //{
+              //  System.out.println(port);
+            //}
+            //for (int i = 0; i < this.neighbors_output_port.length; i++)
+            //{
+                //this.sockets[i] = new Socket(ip, this.neighbors_output_port[i]);
+            //    this.sockets[i] = null;
+            //}
         }
         catch (Exception e)
         {
-            System.out.println("error caught in Node");
+            System.out.println("error caught in Node constructer creating sockets");
             e.printStackTrace();
         }
     }
@@ -129,8 +136,7 @@ public class Node extends Thread
         OutputThread[] clients = new OutputThread[num_of_neighbors];
         for (int i = 0; i < num_of_neighbors; i++)
         {
-            OutputThread client = new OutputThread(this.neighbors_output_port[i],
-                    this.linkedState, this);
+            OutputThread client = new OutputThread(i, this.linkedState, this);
             clients[i] = client;
             client.start();
         }
@@ -143,24 +149,24 @@ public class Node extends Thread
                 servers[i].join();
                 clients[i].join();
             }
-            catch (InterruptedException e)
+            catch (Exception e)
             {
-                System.out.println("error caught in Node");
+                System.out.println("error caught in Node join");
                 e.printStackTrace();
             }
         }
-        for (int i = 0; i < this.neighbors_output_port.length; i++)
-        {
-            try
-            {
-                this.sockets[i].close();
-            }
-            catch (IOException e)
-            {
-                System.out.println("error caught in Node");
-                e.printStackTrace();
-            }
-        }
+        //for (int i = 0; i < this.neighbors_output_port.length; i++)
+        //{
+         //   try
+          //  {
+            //    this.sockets[i].close();
+            //}
+            //catch (Exception e)
+            //{
+             //   System.out.println("error caught in Node closing sockets");
+               // e.printStackTrace();
+            //}
+        //}
     }
 
     public int getNum_of_nodes()

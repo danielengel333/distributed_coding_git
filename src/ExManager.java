@@ -75,6 +75,7 @@ public class ExManager {
             }
             catch (InterruptedException e)
             {
+                System.out.println("ExManager thread error");
                 e.printStackTrace();
             }
         }

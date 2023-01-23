@@ -18,14 +18,21 @@ public class OutputThread extends Thread
     {
         try
         {
+            //System.out.println(this.node.getNeighbors_output_port()[this.socket_index]);
             //get access from lock
+            //System.out.println("Momento 1");
             this.node.getSocket_semaphores()[this.socket_index].acquire();
+            //System.out.println("Momento 2");
 
             //change restricted area
-            Socket s = this.node.getSockets()[this.socket_index];
+            InetAddress ip = InetAddress.getByName("localhost");
+            Socket s = new Socket(ip, this.node.getNeighbors_output_port()[this.socket_index]);
+            //System.out.println("Momento 3");
             ObjectOutputStream output_stream = new ObjectOutputStream(s.getOutputStream());
             output_stream.writeObject(message);
+
             output_stream.close();
+            s.close();
 
             //free lock
             this.node.getSocket_semaphores()[this.socket_index].release();
