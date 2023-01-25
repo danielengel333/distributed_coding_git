@@ -6,25 +6,21 @@ public class InputThreadHandler extends Thread
 {
     private Socket s;
     private Node node;
-    private DataOutputStream outStream;
-    private DataInputStream inputStream;
+    private ServerSocket ss;
     private int[] outputPorts;
-    public InputThreadHandler(Socket s, Node node)
+    public InputThreadHandler(Socket s, Node node, ServerSocket ss)
     {
         this.s = s;
         this.node = node;
+        this.ss = ss;
     }
     @Override
     public void run(){
         try
         {
             ObjectInputStream input_stream = new ObjectInputStream(s.getInputStream());
-            //System.out.println("Momo 1");
             Object o = input_stream.readObject();
-            //System.out.println(o.getClass());
             Pair<Integer, Object> input = (Pair<Integer, Object>)o;
-            //System.out.println("Momo 2");
-            //Object input = input_stream.readObject();
 
             input_stream.close();
             s.close();
@@ -45,6 +41,7 @@ public class InputThreadHandler extends Thread
                 //free lock
                 this.node.getVisited_semaphore().release();
 
+
                 // update weight matrix
 
                 //get access from lock
@@ -60,16 +57,44 @@ public class InputThreadHandler extends Thread
 
                     mat[id1 - 1][id2 - 1] = weight;
                     mat[id2 - 1][id1 - 1] = weight;
-                }
 
+                    double[] edges = this.node.getEdges();
+                    int[] neighbors = this.node.getNeighbors_id();
+                    for (int i = 0; i < edges.length; i++)
+                    {
+                        if ((this.node.getNodeId() == id1 && neighbors[i] == id2) ||
+                                (this.node.getNodeId() == id2 && neighbors[i] == id1))
+                        {
+                            edges[i] = weight;
+                        }
+
+                    }
+                }
                 //free lock
                 this.node.getWeight_matrix_semaphore().release();
+            }
 
-                for (int i = 0; i < this.node.getNeighbors_output_port().length; i++)
+            Thread[] arr = new Thread[this.node.getNeighbors_output_port().length];
+            for (int i = 0; i < this.node.getNeighbors_output_port().length; i++)
+            {
+                Thread t = new OutputThread(i, input, node, ss);
+                arr[i] = t;
+                t.start();
+            }
+
+            while (true)
+            {
+                //System.out.println(this.node.getNodeId());
+                if (this.node.getNum_visited() == node.getNum_of_nodes())
                 {
-                    Thread t = new OutputThread(i, input, node);
-                    t.start();
+                    this.ss.close();
+                    break;
                 }
+            }
+
+            for (int i = 0; i < this.node.getNeighbors_output_port().length; i++)
+            {
+                arr[i].join();
             }
         }
         catch (Exception e)

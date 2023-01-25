@@ -61,12 +61,23 @@ public class ExManager {
         }
     }
 
-    public void start(){
+    public void start()
+    {
+        for (int i = 0; i < this.num_of_nodes; i++)
+        {
+            this.nodes[i] = new Node(this.nodes[i].getNodeId(),
+                    this.nodes[i].getNeighbors_id(),
+                    this.nodes[i].getEdges(),
+                    this.nodes[i].getNeighbors_input_port(),
+                    this.nodes[i].getNeighbors_output_port(),
+                    this.num_of_nodes);
+        }
         // your code here
         for (Node node : this.nodes)
         {
             node.start();
         }
+
         for (Node node : this.nodes)
         {
             try
@@ -79,5 +90,13 @@ public class ExManager {
                 e.printStackTrace();
             }
         }
+        /*try
+        {
+            this.read_txt();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }*/
     }
 }

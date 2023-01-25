@@ -17,41 +17,22 @@ public class InputThread extends Thread
         try {
             ServerSocket ss = new ServerSocket(port);
 
+            //Checker checker = new Checker(this.node, ss);
+            //checker.start();
+
             // running infinite loop for getting client request
             while (true)
             {
-                Socket s = null;
-
-                // if received info from all nodes, kill server
-                if (this.node.getNum_visited() == node.getNum_of_nodes())
-                {
-                    break;
-                }
-
-                try
-                {
-                    // socket object to receive incoming client requests
-
-                    s = ss.accept();
-
-                    System.out.println("A new client is connected : " + s);
-
-                    Thread t = new InputThreadHandler(s, node);
-                    t.start();
-                }
-                catch (Exception e)
-                {
-                    System.out.println("error caught in InputThread");
-                    s.close();
-                    e.printStackTrace();
-                    break;
-                }
+                // socket object to receive incoming client requests
+                Socket s = ss.accept();
+                Thread t = new InputThreadHandler(s, this.node, ss);
+                t.start();
             }
         }
-        catch (IOException e)
+        catch (Exception e)
         {
-            System.out.println("error caught in InputThread");
-            e.printStackTrace();
+            //System.out.println("error caught in InputThread");
+            //e.printStackTrace();
         }
     }
 }
