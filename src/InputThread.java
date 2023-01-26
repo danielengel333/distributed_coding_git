@@ -5,13 +5,15 @@ import java.io.*;
 public class InputThread extends Thread
 {
     private static int count;
-    private int count_self;
+    private boolean isAlive;
+    private int count_alive;
     private int port;
     private Node node;
     public InputThread(int port, Node node)
     {
         this.port = port;
         this.node = node;
+        this.isAlive = true;
         //System.out.println("amount of input threads: " + count++);
     }
     @Override
@@ -28,6 +30,7 @@ public class InputThread extends Thread
             {
                 // socket object to receive incoming client requests
                 Socket s = ss.accept();
+                this.count_alive += 1;
                 Thread t = new InputThreadHandler(s, this.node, ss);
                 t.start();
             }
@@ -37,6 +40,7 @@ public class InputThread extends Thread
             //System.out.println("error caught in InputThread");
             //e.printStackTrace();
         }
+        this.isAlive = false;
         System.out.println("amount of servers dead: " + (++count));
 
     }

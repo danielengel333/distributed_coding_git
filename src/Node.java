@@ -24,6 +24,7 @@ public class Node extends Thread
     protected Socket[] sockets;
     protected boolean ready_to_die;
     protected boolean die;
+    protected InputThread[] servers;
 
     public Node(int id, int[] neighbors_id, double[] edges, int[] neighbors_input_port, int[] neighbors__output_port, int num_of_nodes)
     {
@@ -145,11 +146,11 @@ public class Node extends Thread
     @Override
     public void run()
     {
-        InputThread[] servers = new InputThread[num_of_neighbors];
+        this.servers = new InputThread[num_of_neighbors];
         for (int i = 0; i < num_of_neighbors; i++)
         {
             InputThread server = new InputThread(this.neighbors_input_port[i], this);
-            servers[i] = server;
+            this.servers[i] = server;
             server.start();
         }
 

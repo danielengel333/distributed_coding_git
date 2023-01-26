@@ -86,6 +86,8 @@ public class InputThreadHandler extends Thread
         }
         catch (Exception e)
         {
+            this.node.getVisited_semaphore().release();
+            this.node.getWeight_matrix_semaphore().release();
             System.out.println("error caught in InputThreadHandler");
             e.printStackTrace();
         }
