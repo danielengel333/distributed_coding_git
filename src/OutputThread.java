@@ -15,7 +15,7 @@ public class OutputThread extends Thread
         this.message = message;
         this.node = node;
         this.ss = ss;
-        System.out.println("amount of output threads: " + count++);
+        //System.out.println("amount of output threads: " + count++);
     }
     @Override
     public void run()
@@ -38,6 +38,10 @@ public class OutputThread extends Thread
                         this.node.getNeighbors_id()[this.socket_index] + " STARTING");*/
 
                 //get access from lock
+                /*while(!this.node.getSent_pair_semaphore().tryAcquire())
+                {
+                    System.out.println("waiting for sent pair semaphore");
+                }*/
                 this.node.getSent_pair_semaphore().acquire();
 
                 //change restricted area
@@ -49,6 +53,10 @@ public class OutputThread extends Thread
 
 
                 //get access from lock
+                /*while(!this.node.getSocket_semaphores()[this.socket_index].tryAcquire())
+                {
+                    //System.out.println("waiting for socket semaphore " + (++count));
+                }*/
                 this.node.getSocket_semaphores()[this.socket_index].acquire();
 
                 //change restricted area
@@ -70,6 +78,7 @@ public class OutputThread extends Thread
             //System.out.println("Output thread ERROR: " + this.toString());
             //e.printStackTrace();
         }
+        //System.out.println("amount of output threads: " + count--);
     }
 
     @Override

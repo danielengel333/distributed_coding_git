@@ -12,6 +12,7 @@ public class InputThread extends Thread
     {
         this.port = port;
         this.node = node;
+        //System.out.println("amount of input threads: " + count++);
     }
     @Override
     public void run()
@@ -36,7 +37,8 @@ public class InputThread extends Thread
             //System.out.println("error caught in InputThread");
             //e.printStackTrace();
         }
-        System.out.println(count++);
+        System.out.println("amount of servers dead: " + (++count));
+
     }
 }
 

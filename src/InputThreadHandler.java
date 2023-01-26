@@ -4,6 +4,7 @@ import java.io.*;
 
 public class InputThreadHandler extends Thread
 {
+    private static int count;
     private Socket s;
     private Node node;
     private ServerSocket ss;
@@ -13,6 +14,7 @@ public class InputThreadHandler extends Thread
         this.s = s;
         this.node = node;
         this.ss = ss;
+        //System.out.println("amount of input handler threads: " + count++);
     }
     @Override
     public void run(){
@@ -32,6 +34,10 @@ public class InputThreadHandler extends Thread
             if (this.node.getVisited()[source_id - 1] == 0)
             {
                 //get access from lock
+                /*while(!this.node.getVisited_semaphore().tryAcquire())
+                {
+                    System.out.println("waiting for visited semaphore");
+                }*/
                 this.node.getVisited_semaphore().acquire();
 
                 //change restricted area
@@ -45,6 +51,10 @@ public class InputThreadHandler extends Thread
                 // update weight matrix
 
                 //get access from lock
+                /*while(!this.node.getWeight_matrix_semaphore().tryAcquire())
+                {
+                    System.out.println("waiting for weight semaphore");
+                }*/
                 this.node.getWeight_matrix_semaphore().acquire();
 
                 //change restricted area
@@ -57,17 +67,6 @@ public class InputThreadHandler extends Thread
 
                     mat[id1 - 1][id2 - 1] = weight;
                     mat[id2 - 1][id1 - 1] = weight;
-
-                    /*double[] edges = this.node.getEdges();
-                    int[] neighbors = this.node.getNeighbors_id();
-                    for (int i = 0; i < edges.length; i++)
-                    {
-                        if ((this.node.getNodeId() == id1 && neighbors[i] == id2) ||
-                                (this.node.getNodeId() == id2 && neighbors[i] == id1))
-                        {
-                            edges[i] = weight;
-                        }
-                    }*/
                 }
                 //free lock
                 this.node.getWeight_matrix_semaphore().release();
@@ -84,27 +83,13 @@ public class InputThreadHandler extends Thread
             {
                 this.ss.close();
             }
-
-            /*while (true)
-            {
-                //System.out.println(this.node.getNodeId());
-                if (this.node.getNum_visited() == node.getNum_of_nodes())
-                {
-                    this.ss.close();
-                    break;
-                }
-            }*/
-
-            /*for (int i = 0; i < this.node.getNeighbors_output_port().length; i++)
-            {
-                arr[i].join();
-            }*/
         }
         catch (Exception e)
         {
             System.out.println("error caught in InputThreadHandler");
             e.printStackTrace();
         }
+        //System.out.println("amount of input handler threads: " + count--);
 
     }
 

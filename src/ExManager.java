@@ -90,13 +90,5 @@ public class ExManager {
                 e.printStackTrace();
             }
         }
-        /*try
-        {
-            this.read_txt();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }*/
     }
 }
