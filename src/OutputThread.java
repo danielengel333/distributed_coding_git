@@ -4,6 +4,7 @@ import java.io.*;
 
 public class OutputThread extends Thread
 {
+    private static int count;
     private int socket_index;
     private Object message;
     private Node node;
@@ -14,12 +15,18 @@ public class OutputThread extends Thread
         this.message = message;
         this.node = node;
         this.ss = ss;
+        System.out.println("amount of output threads: " + count++);
     }
     @Override
     public void run()
     {
         try
         {
+            /*if (this.node.getNum_visited() == node.getNum_of_nodes())
+            {
+                this.ss.close();
+            }*/
+
             int[][] sent_pair_matrix = this.node.getSent_pairs();
             int source_id = ((Pair<Integer,Object>)this.message).getKey();
             int dest_id = this.node.getNeighbors_id()[this.socket_index];
@@ -59,6 +66,7 @@ public class OutputThread extends Thread
         }
         catch(Exception e)
         {
+            this.node.getSocket_semaphores()[this.socket_index].release();
             //System.out.println("Output thread ERROR: " + this.toString());
             //e.printStackTrace();
         }

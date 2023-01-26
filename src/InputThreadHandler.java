@@ -58,7 +58,7 @@ public class InputThreadHandler extends Thread
                     mat[id1 - 1][id2 - 1] = weight;
                     mat[id2 - 1][id1 - 1] = weight;
 
-                    double[] edges = this.node.getEdges();
+                    /*double[] edges = this.node.getEdges();
                     int[] neighbors = this.node.getNeighbors_id();
                     for (int i = 0; i < edges.length; i++)
                     {
@@ -67,8 +67,7 @@ public class InputThreadHandler extends Thread
                         {
                             edges[i] = weight;
                         }
-
-                    }
+                    }*/
                 }
                 //free lock
                 this.node.getWeight_matrix_semaphore().release();
@@ -81,8 +80,12 @@ public class InputThreadHandler extends Thread
                 arr[i] = t;
                 t.start();
             }
+            if (this.node.getNum_visited() == node.getNum_of_nodes())
+            {
+                this.ss.close();
+            }
 
-            while (true)
+            /*while (true)
             {
                 //System.out.println(this.node.getNodeId());
                 if (this.node.getNum_visited() == node.getNum_of_nodes())
@@ -90,12 +93,12 @@ public class InputThreadHandler extends Thread
                     this.ss.close();
                     break;
                 }
-            }
+            }*/
 
-            for (int i = 0; i < this.node.getNeighbors_output_port().length; i++)
+            /*for (int i = 0; i < this.node.getNeighbors_output_port().length; i++)
             {
                 arr[i].join();
-            }
+            }*/
         }
         catch (Exception e)
         {

@@ -29,6 +29,7 @@ public class main {
                 }
 
                 if(line.contains("update")){
+                    //System.out.println("update");
                     String[] data = line.split(" ");
                     m.update_edge(Integer.parseInt(data[1]), Integer.parseInt(data[2]), Double.parseDouble(data[3]));
                 }
