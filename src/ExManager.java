@@ -78,6 +78,23 @@ public class ExManager {
             node.start();
         }
 
+        /*while(true)
+        {
+            boolean condition = false;
+            for (Node node: this.nodes)
+            {
+                if (node.num_visited != this.num_of_nodes)
+                {
+                    condition = true;
+                    System.out.print(node.id + " ");
+                }
+            }
+            if (condition == false)
+                break;
+
+            System.out.println("");
+        }*/
+
         for (Node node : this.nodes)
         {
             try
